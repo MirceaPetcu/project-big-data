@@ -17,12 +17,13 @@ import argparse
 from sklearn.linear_model import ARDRegression
 from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
+from sklearn.tree import DecisionTreeRegressor
 from umap import UMAP
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Hyperparameter tuning')
-    parser.add_argument('--model', type=str, default='svr', help='Model to tune')
+    parser.add_argument('--model', type=str, default='dt', help='Model to tune')
     parser.add_argument('--objective', type=str, default='mse', help='Objective to optimize')
     parser.add_argument('--n_trials', type=int, default=200, help='Number of trials')
     return parser.parse_args()
@@ -62,6 +63,8 @@ def get_model(regressor_params):
             model = KernelRidge(**regressor_params)
         case 'en':
             model = ElasticNet(**regressor_params)
+        case 'dt':
+            model = DecisionTreeRegressor(**regressor_params)
         case _:
             model = RandomForestRegressor(**regressor_params)
     return model
@@ -119,6 +122,13 @@ def objective(trial):
                 'solver': trial.suggest_categorical('solver', ['lbfgs', 'sgd', 'adam']),
                 'alpha': trial.suggest_float('alpha', 1e-5, 1),
                 'learning_rate': trial.suggest_categorical('learning_rate', ['constant', 'invscaling', 'adaptive']),
+                'random_state': 6
+            }
+        case 'dt':
+            model_param = {
+                'max_depth': trial.suggest_int('max_depth', 1, 100),
+                'min_samples_split': trial.suggest_int('min_samples_split', 2, 10),
+                'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
                 'random_state': 6
             }
         case _:

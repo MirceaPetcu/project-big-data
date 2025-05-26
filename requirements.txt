@@ -7,3 +7,4 @@ xgboost
 lightgbm
 umap-learn
 optuna
+kaleido

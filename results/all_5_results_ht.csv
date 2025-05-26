@@ -1,0 +1,6 @@
+model,objective,best_params,best_value
+dt,mse,"{'max_depth': 5, 'min_samples_split': 7, 'min_samples_leaf': 7}",0.7732154016037406
+ridge,mse,{'alpha': 99.92768630048808},0.7548540602301415
+rf,mse,"{'n_estimators': 192, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 36}",0.7160649734365254
+en,mse,"{'alpha': 0.00017684488565367914, 'l1_ratio': 0.662257034271839, 'max_iter': 242, 'tol': 0.023609732756538916}",0.7535091428506326
+lgbm,mse,"{'n_estimators': 192, 'max_depth': 81, 'learning_rate': 0.031661039134099456, 'num_leaves': 74, 'lambda_l1': 0.12512871448721335, 'lambda_l2': 0.0035628067238089207, 'min_child_samples': 61}",0.704652509712137
