@@ -3,9 +3,9 @@ import subprocess
 
 
 ### tune all models with bayesian optimization ###
-models = ['rf', 'ridge', 'en', 'lgbm', 'dt']
+models = ['ada', 'ridge', 'lgbm', 'dt', 'rf']
 objective = 'mse'
-n_trials = [150, 200, 200, 200, 200]
+n_trials = [100, 100, 100, 100, 100]
 
 for model in models:
     subprocess.run(['python', 'tune.py',

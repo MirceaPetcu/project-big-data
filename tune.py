@@ -2,7 +2,7 @@ import os
 import random
 from sklearn.decomposition import PCA, TruncatedSVD, FactorAnalysis
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestRegressor, VotingRegressor
+from sklearn.ensemble import RandomForestRegressor, VotingRegressor, AdaBoostRegressor
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 import numpy as np
@@ -19,7 +19,9 @@ from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
 from sklearn.tree import DecisionTreeRegressor
 from umap import UMAP
+import warnings
 
+warnings.filterwarnings('ignore')
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Hyperparameter tuning')
@@ -66,6 +68,8 @@ def get_model(regressor_params):
             model = ElasticNet(**regressor_params)
         case 'dt':
             model = DecisionTreeRegressor(**regressor_params)
+        case 'ada':
+            model = AdaBoostRegressor(**regressor_params)
         case _:
             model = RandomForestRegressor(**regressor_params)
     return model
@@ -105,7 +109,6 @@ def objective(trial):
         case 'en':
             model_param = {
                 'alpha': trial.suggest_float('alpha', 1e-5, 100, log=True),
-                'l1_ratio': trial.suggest_float('l1_ratio', 0, 1),
                 'max_iter': trial.suggest_int('max_iter', 100, 1000),
                 'tol': trial.suggest_float('tol', 1e-5, 1e-1),
             }
@@ -131,6 +134,13 @@ def objective(trial):
                 'min_samples_split': trial.suggest_int('min_samples_split', 2, 10),
                 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
                 'random_state': 42
+            }
+        case 'ada':
+            model_param = {
+                'n_estimators': trial.suggest_int('n_estimators', 50, 200),
+                'learning_rate': trial.suggest_float('learning_rate', 1e-5, 1),
+                'random_state': 42,
+                "loss": trial.suggest_categorical('loss', ['linear', 'square', 'exponential']),
             }
         case _:
             model_param = {}
