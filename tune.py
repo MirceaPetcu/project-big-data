@@ -30,14 +30,14 @@ def parse_args():
 
 
 args = parse_args()
-np.random.seed(6)
-random.seed(6)
+np.random.seed(42)
+random.seed(42)
 df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'preprocessed_data.csv'))
 
 x = df.drop(['shares', 'log_shares', 'popular', 'weekday', 'channel'], axis=1).values
 y = df['log_shares'].values
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=6)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
 standard_scaler = StandardScaler()
 x_train = standard_scaler.fit_transform(x_train)
@@ -82,7 +82,7 @@ def objective(trial):
                 'max_features': trial.suggest_categorical('max_features', [None, 'sqrt', 'log2']),
                 'bootstrap': True,
                 'max_depth': trial.suggest_int('max_depth', 1, 100),
-                'random_state': 6
+                'random_state': 42
             }
         case 'lgbm':
             model_param = {
@@ -93,13 +93,13 @@ def objective(trial):
                 'lambda_l1': trial.suggest_float('lambda_l1', 1e-5, 1),
                 'lambda_l2': trial.suggest_float('lambda_l2', 1e-5, 1),
                 'min_child_samples': trial.suggest_int('min_child_samples', 1, 100),
-                'random_state': 6
+                'random_state': 42
             }
         case 'ridge':
             model_param = {
                 'alpha': trial.suggest_float('alpha', 1e-5, 100, log=True),
                 'solver': 'auto',
-                'random_state': 6
+                'random_state': 42
             }
         case 'en':
             model_param = {
@@ -122,14 +122,14 @@ def objective(trial):
                 'solver': trial.suggest_categorical('solver', ['lbfgs', 'sgd', 'adam']),
                 'alpha': trial.suggest_float('alpha', 1e-5, 1),
                 'learning_rate': trial.suggest_categorical('learning_rate', ['constant', 'invscaling', 'adaptive']),
-                'random_state': 6
+                'random_state': 42
             }
         case 'dt':
             model_param = {
                 'max_depth': trial.suggest_int('max_depth', 1, 100),
                 'min_samples_split': trial.suggest_int('min_samples_split', 2, 10),
                 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
-                'random_state': 6
+                'random_state': 42
             }
         case _:
             model_param = {}
@@ -137,7 +137,7 @@ def objective(trial):
 
     model = get_model(model_param)
    
-    kf = KFold(n_splits=5, shuffle=True, random_state=6)
+    kf = KFold(n_splits=5, shuffle=True, random_state=42)
     mae = 0
     mse = 0
     for train_index, test_index in kf.split(x_train):
@@ -167,7 +167,7 @@ if __name__ == '__main__':
         'storage': None,
         'load_if_exists': True,
         'direction': 'maximize' if args.objective in ['spearman', 'kendall'] else 'minimize',
-        'sampler': optuna.samplers.TPESampler(seed=6),
+        'sampler': optuna.samplers.TPESampler(seed=42),
         'pruner': optuna.pruners.MedianPruner(n_warmup_steps=10)
     })
 
