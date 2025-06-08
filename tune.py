@@ -23,7 +23,7 @@ from umap import UMAP
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Hyperparameter tuning')
-    parser.add_argument('--model', type=str, default='dt', help='Model to tune')
+    parser.add_argument('--model', type=str, default='ridge', help='Model to tune')
     parser.add_argument('--objective', type=str, default='mse', help='Objective to optimize')
     parser.add_argument('--n_trials', type=int, default=200, help='Number of trials')
     return parser.parse_args()
@@ -32,12 +32,13 @@ def parse_args():
 args = parse_args()
 np.random.seed(42)
 random.seed(42)
-df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'preprocessed_data.csv'))
+df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'train_selected_features.csv'))
 
-x = df.drop(['shares', 'log_shares', 'popular', 'weekday', 'channel'], axis=1).values
+x = df.drop(['log_shares'], axis=1).values
 y = df['log_shares'].values
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+x_train = x
+y_train = y
 
 standard_scaler = StandardScaler()
 x_train = standard_scaler.fit_transform(x_train)
